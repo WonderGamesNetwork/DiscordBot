@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Main {
 
 
-    protected static final JDA jda = buildJDA();
+    protected static final JDA JDA = buildJDA();
 
     private static JDA buildJDA() {
         final JDABuilder jdaBuilder;
@@ -24,24 +24,26 @@ public class Main {
         jdaBuilder.setEnabledIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         jdaBuilder.enableCache(Arrays.asList(CacheFlag.values()));
         jdaBuilder.setAutoReconnect(true);
+
         return jdaBuilder.build();
     }
 
     public static void main(final String[] args) {
         final Scanner scanner;
 
-        if (Main.jda == null)
+        if (Main.JDA == null)
             return;
         try {
-            Main.jda.awaitReady();
+            Main.JDA.awaitReady();
         } catch (InterruptedException exception) {
             exception.printStackTrace();
             return;
         }
+        WGBot.botMainSetup();
         scanner = new Scanner(System.in);
         for (; scanner.hasNext(); scanner.next());
         System.out.println("Stopping...");
-        Main.jda.shutdown();
+        Main.JDA.shutdown();
     }
 
 }
