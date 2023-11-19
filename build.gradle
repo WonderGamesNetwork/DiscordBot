@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'fr.wondergames'
+version '0.1'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url 'https://nexus.mrcubee.net/repository/minecraft/'
+    }
+
+    maven {
+        url 'https://nexus.wondergames.fr/repository/minecraft/'
+    }
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:5.0.0-beta.18'
+}
+
+jar {
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes 'Main-Class': 'fr.wondergames.discord.Main'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    exclude "**/META-INF/**"
+}
+
+publishing {
+
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url 'https://nexus.wondergames.fr/repository/minecraft/'
+
+            credentials {
+                username = findProperty("mavenUsername") ?: System.getenv("MAVEN_USERNAME")
+                password = findProperty("mavenPassword") ?: System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
